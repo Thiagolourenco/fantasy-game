@@ -1,44 +1,34 @@
 import React from 'react';
-import { View, Text, FlatList } from 'react-native';
-
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import useStyles from './rankingViewStyle';
 import { Header } from '../../components';
 import { useRankingViewModel } from './rankingViewModel';
-const MOCK = [
-  {
-    name: 'Jose Perez',
-    points: 120,
-    position: 1,
-  },
-  {
-    name: 'Juan Perez',
-    points: 100,
-    position: 2,
-  },
-  {
-    name: 'Pedro Perez',
-    points: 80,
-    position: 3,
-  },
-];
 
 const RankingView = () => {
   const styles = useStyles();
   const { ranking, navigateToLineup } = useRankingViewModel();
+
   return (
     <View style={styles.container}>
-      <Header onPress={navigateToLineup} title="Ranking" />
+      <Header title="Ranking" />
       <View style={styles.content}>
         <FlatList
-          data={MOCK}
+          data={ranking}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              <Text>{item.name}</Text>
+              <Text style={styles.rank}>#{item.position}</Text>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.points}>{item.points} pts</Text>
             </View>
           )}
         />
       </View>
-     
+      <TouchableOpacity 
+        style={styles.lineupButton} 
+        onPress={navigateToLineup}
+      >
+        <Text style={styles.lineupButtonText}>Ver Escalação</Text>
+      </TouchableOpacity>
     </View>
   );
 };

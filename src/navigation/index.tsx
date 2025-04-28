@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PublicNavigator from './public';
 import PrivateNavigator from './private';
+import { useOnboardingStore } from '../store/onboarding.store';
 
 export type RootStackParamList = {
   Public: undefined;
@@ -12,12 +13,20 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
-  const isAuthenticated = false; // Replace with actual auth logic
+  const { isCompleted, isLoading, checkOnboardingStatus } = useOnboardingStore();
+
+  useEffect(() => {
+    checkOnboardingStatus();
+  }, []);
+
+  if (isLoading) {
+    return null; // ou um componente de loading
+  }
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isAuthenticated ? (
+        {isCompleted ? (
           <Stack.Screen name="Private" component={PrivateNavigator} />
         ) : (
           <Stack.Screen name="Public" component={PublicNavigator} />

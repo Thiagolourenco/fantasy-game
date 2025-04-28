@@ -1,4 +1,5 @@
 import RankingView from "./ranking/rankingView";
 import LineupView from "./lineup/lineupView";
-
-export { RankingView, LineupView };
+import OnboardingView from "./onboarding/onboardingVIew";
+  
+export { RankingView, LineupView, OnboardingView };
