@@ -6,15 +6,18 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "environment": "development"
+      "environment": "development",
+      "credentialsSource": "local"
     },
     "preview": {
       "distribution": "internal",
-      "environment": "preview"
+      "environment": "preview",
+      "credentialsSource": "local"
     },
     "production": {
       "distribution": "internal",
-      "environment": "production"
+      "environment": "production",
+      "credentialsSource": "local"
     }
   }
 }
