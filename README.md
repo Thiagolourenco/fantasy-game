@@ -2,7 +2,7 @@
 
 Bem-vindo ao Fantasy Game!
 
-Monte sua escalação, desafie amigos e acompanhe o ranking em tempo real. Uma experiência divertida para quem ama futebol e estratégia!
+Aplicativo feito para Desafio Técnico
 
 ## Principais Tecnologias Utilizadas
 
@@ -31,14 +31,6 @@ O onboarding do app apresenta:
 - As principais tecnologias utilizadas
 - Como o app funciona
 - Instruções rápidas de uso
-
-## Comunidade e Suporte
-
-- [Documentação do Expo](https://docs.expo.dev/)
-- [Documentação do React Native](https://reactnative.dev/)
-- [Documentação do Reanimated](https://docs.swmansion.com/react-native-reanimated/)
-- [Documentação do Skia](https://shopify.github.io/react-native-skia/)
-
 ---
 
 Sinta-se à vontade para contribuir, sugerir melhorias ou relatar problemas!
