@@ -4,17 +4,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { PrivateStackParamList } from "../../navigation/private";
 import { useLineupStore } from "../../store/lineup.store";
 
-interface RankingPlayer {
-  name: string;
-  points: number;
-  position: number;
-}
-
-interface RankingViewModel {
-  ranking: RankingPlayer[];
-  navigateToLineup: () => void;
-}
-
 export const useRankingViewModel = (): RankingViewModel => {
   const navigation = useNavigation<NativeStackNavigationProp<PrivateStackParamList>>();
   const { setPlayer } = useLineupStore();

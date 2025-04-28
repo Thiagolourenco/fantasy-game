@@ -130,7 +130,6 @@ const OnboardingView = () => {
     animateStep();
   }, [currentStep]);
 
-  console.log("Step =? ", steps[currentStep].image);
   return (
     <View style={[styles.container, { backgroundColor: Colors.palette.purpleDark }] }>
       <View style={styles.content}>

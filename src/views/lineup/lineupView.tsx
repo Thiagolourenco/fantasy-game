@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { Canvas, RoundedRect, Circle, Line, Path, Group } from '@shopify/react-native-skia';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { PrivateStackParamList } from '../../navigation/private';

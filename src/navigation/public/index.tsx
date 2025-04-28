@@ -4,9 +4,8 @@ import { Text, View } from 'react-native';
 
 import OnboardingView from '../../views/onboarding/onboardingVIew';
 
-// Define your public screen params here
 export type PublicStackParamList = {
-  Onboarding: undefined; // Example
+  Onboarding: undefined;
 };
 
 const Stack = createNativeStackNavigator<PublicStackParamList>();

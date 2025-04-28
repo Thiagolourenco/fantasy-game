@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import useStyles from './rankingViewStyle';
-import { Colors } from '../../constants/Colors';
 import { useRankingViewModel } from './rankingViewModel';
 
 const RankingView = () => {
