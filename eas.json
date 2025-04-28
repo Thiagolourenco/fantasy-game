@@ -1,26 +1,20 @@
 {
+  "cli": {
+    "appVersionSource": "project"
+  },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "environment": "development",
-      "cli": {
-        "appVersionSource": "project"
-      }
+      "environment": "development"
     },
     "preview": {
       "distribution": "internal",
-      "environment": "preview",
-      "cli": {
-        "appVersionSource": "project"
-      }
+      "environment": "preview"
     },
     "production": {
       "distribution": "internal",
-      "environment": "production",
-      "cli": {
-        "appVersionSource": "project"
-      }
+      "environment": "production"
     }
   }
 }
