@@ -14,7 +14,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/stadium.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.fantasygame"
     },
     "web": {
       "bundler": "metro",
