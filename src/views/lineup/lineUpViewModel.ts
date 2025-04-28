@@ -1,37 +1,15 @@
 import { useState } from 'react';
 import { MOCK_PLAYERS } from '../../constants/lineup.constants';
 import { useLineupStore } from '../../store/lineup.store';
-
-interface Player {
-  id: number;
-  name: string;
-  position: string;
-  score: number;
-}
-
-interface Position {
-  type: string;
-}
-
-interface LineUpViewModel {
-  sheetVisible: boolean;
-  selectedPosition: string | null;
-  selectedPlayers: Record<string, string>;
-  totalScore: number;
-  handleCardPress: (type: string, idx: number, jdx: number) => void;
-  handleCloseSheet: () => void;
-  handleSelectPlayer: (playerName: string) => void;
-  handleRemovePlayer: () => void;
-  getCurrentPlayer: () => Player | undefined;
-  getPlayerByPosition: (type: string, idx: number, jdx: number) => Player | undefined;
-  getFilteredPlayers: () => Player[];
-  isPlayerSelected: (playerName: string) => boolean;
-}
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { PrivateStackParamList } from '../../navigation/private';
 
 export const useLineUpViewModel = (): LineUpViewModel => {
   const [sheetVisible, setSheetVisible] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<string | null>(null);
   const { selectedPlayers, totalScore, setPlayer, removePlayer } = useLineupStore();
+  const navigation = useNavigation<NativeStackNavigationProp<PrivateStackParamList>>();
 
   const handleCardPress = (type: string, idx: number, jdx: number) => {
     const positionKey = `${type}_${idx}_${jdx}`;
@@ -80,6 +58,14 @@ export const useLineUpViewModel = (): LineUpViewModel => {
     return Object.values(selectedPlayers).includes(playerName);
   };
 
+  const handleSaveLineup = () => {
+    navigation.navigate('Ranking');
+  };
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
   return {
     sheetVisible,
     selectedPosition,
@@ -93,5 +79,7 @@ export const useLineUpViewModel = (): LineUpViewModel => {
     getPlayerByPosition,
     getFilteredPlayers,
     isPlayerSelected,
+    handleSaveLineup,
+    handleGoBack,
   };
 };

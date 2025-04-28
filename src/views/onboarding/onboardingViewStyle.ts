@@ -25,8 +25,8 @@ export default function useStyles() {
       justifyContent: 'center',
     },
     image: {
-      width: '100%',
-      height: '100%',
+      width: 300,
+      height: 300,
       resizeMode: 'contain',
     },
     title: {

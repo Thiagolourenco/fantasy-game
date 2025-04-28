@@ -7,7 +7,7 @@ import { useOnboardingStore } from '../../store/onboarding.store';
 interface OnboardingStep {
   title: string;
   description: string;
-  image: any; // We'll use require() for images
+  image: any;
 }
 
 interface OnboardingViewModel {

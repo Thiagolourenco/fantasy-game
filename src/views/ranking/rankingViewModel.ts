@@ -37,7 +37,6 @@ export const useRankingViewModel = (): RankingViewModel => {
   ]);
 
   const navigateToLineup = () => {
-    // Pre-fill the lineup with some players
     setPlayer('GOL_3_2', 'Weverton');
     setPlayer('ZAG_2_2', 'Carlos Souza');
     setPlayer('ZAG_2_3', 'Pedro Santos');

@@ -10,10 +10,10 @@ const Header = ({ onPress, title, canGoBack }: { onPress?: () => void, title: st
     <View style={styles.container}>
       {canGoBack && (
         <Pressable onPress={canGoBack}>
-          <Text>Voltar</Text>
+          <Text style={styles.backButton}>Voltar</Text>
         </Pressable>
       )}
-      <Text>{title}</Text>
+      <Text style={styles.title}>{title}</Text>
 
       {onPress && (
         <Pressable style={{

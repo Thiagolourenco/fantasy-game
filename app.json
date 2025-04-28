@@ -30,6 +30,12 @@
           "backgroundColor": "#ffffff"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "9676d5f3-1abc-41db-a3fd-92df92e5cbf6"
+      }
+    },
+    "owner": "thiagoloure"
   }
 }

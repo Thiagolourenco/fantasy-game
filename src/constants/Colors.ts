@@ -6,7 +6,27 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
+const palette = {
+  white: '#FFFFFF',
+  green: '#74E857',
+  grayLight: '#D9D9D9',
+  grayLighter: '#FAFAFA',
+  purpleDark: '#503280',
+  purple: '#794CF3',
+  purpleLight: '#8776AE',
+};
+
 export const Colors = {
+  palette,
+  background: palette.white,
+  primary: palette.purple,
+  secondary: palette.green,
+  text: palette.purpleDark,
+  textLight: palette.white,
+  card: palette.grayLight,
+  border: palette.grayLighter,
+  highlight: palette.green,
+  // You can add more semantic colors as needed
   light: {
     text: '#11181C',
     background: '#fff',
@@ -24,3 +44,5 @@ export const Colors = {
     tabIconSelected: tintColorDark,
   },
 };
+
+export default Colors;

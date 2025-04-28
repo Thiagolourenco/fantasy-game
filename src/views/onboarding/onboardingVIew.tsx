@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, Dimensions, Image } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -7,30 +7,28 @@ import Animated, {
   interpolate,
   useSharedValue,
   withSequence,
-  withDelay,
   runOnJS,
-  Extrapolate,
+  useAnimatedGestureHandler,
 } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 
 import useStyles from './onboardingViewStyle';
 import { useOnboardingViewModel } from './onboardingViewModel';
+import { Colors } from '../../constants/Colors';
 
 const { width } = Dimensions.get('window');
 const SWIPE_THRESHOLD = width * 0.3;
 
 const OnboardingView = () => {
   const styles = useStyles();
-  const { currentStep, steps, handleNext, handleSkip, isLastStep } = useOnboardingViewModel();
+  const { currentStep, steps, handleNext, handleSkip, isLastStep, setCurrentStep } = useOnboardingViewModel();
 
-  // Animated values
   const translateX = useSharedValue(0);
   const fadeIn = useSharedValue(1);
   const scale = useSharedValue(1);
-  const progress = useSharedValue(0);
+  const progress = useSharedValue(currentStep);
   const imageScale = useSharedValue(1);
 
-  // Animation function
   const animateStep = (direction: 'next' | 'prev' = 'next') => {
     const startX = direction === 'next' ? -width : width;
     translateX.value = withSequence(
@@ -43,80 +41,63 @@ const OnboardingView = () => {
       withTiming(0.8, { duration: 0 }),
       withSpring(1, { damping: 15 })
     );
-    progress.value = withTiming(currentStep / (steps.length - 1), { duration: 500 });
   };
 
-  const handleGesture = (event: any) => {
-    'worklet';
-    const { translationX } = event;
-    translateX.value = translationX;
-    
-    // Calculate progress based on gesture
-    const newProgress = currentStep / (steps.length - 1) + (translationX / width);
-    progress.value = Math.max(0, Math.min(1, newProgress));
-    
-    // Scale image based on gesture
-    const scaleValue = interpolate(
-      Math.abs(translationX),
-      [0, width / 2],
-      [1, 0.8],
-      Extrapolate.CLAMP
-    );
-    imageScale.value = scaleValue;
-  };
-
-  const handleGestureEnd = (event: any) => {
-    'worklet';
-    const { velocityX, translationX } = event;
-    
-    if (Math.abs(translationX) > SWIPE_THRESHOLD || Math.abs(velocityX) > 500) {
-      if (translationX > 0 && currentStep > 0) {
-        // Swipe right - go to previous
-        translateX.value = withTiming(width, { duration: 300 }, () => {
-          runOnJS(handlePrev)();
-        });
-      } else if (translationX < 0 && currentStep < steps.length - 1) {
-        // Swipe left - go to next
-        translateX.value = withTiming(-width, { duration: 300 }, () => {
-          runOnJS(handleNext)();
-        });
+  const gestureHandler = useAnimatedGestureHandler({
+    onStart: (_, ctx: any) => {
+      ctx.startX = translateX.value;
+    },
+    onActive: (event, ctx: any) => {
+      translateX.value = ctx.startX + event.translationX;
+      const swipeProgress = currentStep - event.translationX / width;
+      progress.value = Math.max(0, Math.min(steps.length - 1, swipeProgress));
+      const scaleValue = interpolate(
+        Math.abs(event.translationX),
+        [0, width / 2],
+        [1, 0.8],
+        'clamp'
+      );
+      imageScale.value = scaleValue;
+    },
+    onEnd: (event) => {
+      let nextStep = currentStep;
+      if (Math.abs(event.translationX) > SWIPE_THRESHOLD || Math.abs(event.velocityX) > 500) {
+        if (event.translationX > 0 && currentStep > 0) {
+          nextStep = currentStep - 1;
+          translateX.value = withTiming(width, { duration: 300 }, () => {
+            runOnJS(setCurrentStep)(nextStep);
+          });
+        } else if (event.translationX < 0 && currentStep < steps.length - 1) {
+          nextStep = currentStep + 1;
+          translateX.value = withTiming(-width, { duration: 300 }, () => {
+            runOnJS(setCurrentStep)(nextStep);
+          });
+        } else {
+          translateX.value = withSpring(0, { damping: 15 });
+          imageScale.value = withSpring(1, { damping: 15 });
+        }
       } else {
-        // Return to center
         translateX.value = withSpring(0, { damping: 15 });
         imageScale.value = withSpring(1, { damping: 15 });
       }
-    } else {
-      // Return to center if not swiped enough
-      translateX.value = withSpring(0, { damping: 15 });
-      imageScale.value = withSpring(1, { damping: 15 });
-    }
-  };
+    },
+  });
 
-  const handlePrev = () => {
-    if (currentStep > 0) {
-      // Update step in view model
-      runOnJS(() => {
-        const vm = useOnboardingViewModel();
-        vm.setCurrentStep(currentStep - 1);
-      })();
-    }
-  };
-
-  // Animated styles
   const contentStyle = useAnimatedStyle(() => {
     const scaleValue = interpolate(
       progress.value,
-      [0, 1],
+      [0, steps.length - 1],
       [0.8, 1],
-      Extrapolate.CLAMP
+      'clamp'
     );
-
     return {
       transform: [
         { translateX: translateX.value },
         { scale: scaleValue },
       ],
       opacity: fadeIn.value,
+      backgroundColor: Colors.palette.purpleDark,
+      borderRadius: 24,
     };
   });
 
@@ -125,6 +106,8 @@ const OnboardingView = () => {
       transform: [
         { scale: imageScale.value },
       ],
+      backgroundColor: Colors.palette.purple,
+      borderRadius: 16,
     };
   });
 
@@ -133,27 +116,25 @@ const OnboardingView = () => {
       progress.value,
       [index - 1, index, index + 1],
       [0.3, 1, 0.3],
-      Extrapolate.CLAMP
+      'clamp'
     );
-
     return {
       opacity: dotProgress,
-      transform: [{ scale: interpolate(dotProgress, [0.3, 1], [0.8, 1.2]) }],
+      transform: [{ scale: interpolate(dotProgress, [0.3, 1], [0.8, 1.2], 'clamp') }],
+      backgroundColor: dotProgress > 0.9 ? Colors.palette.green : Colors.palette.white,
     };
   });
 
-  // Animate when step changes
-  React.useEffect(() => {
+  useEffect(() => {
+    progress.value = currentStep;
     animateStep();
   }, [currentStep]);
 
+  console.log("Step =? ", steps[currentStep].image);
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: Colors.palette.purpleDark }] }>
       <View style={styles.content}>
-        <PanGestureHandler
-          onGestureEvent={handleGesture}
-          onEnded={handleGestureEnd}
-        >
+        <PanGestureHandler onGestureEvent={gestureHandler}>
           <Animated.View style={[styles.contentContainer, contentStyle]}>
             <Animated.View style={[styles.imageContainer, imageStyle]}>
               <Image
@@ -162,8 +143,8 @@ const OnboardingView = () => {
                 resizeMode="contain"
               />
             </Animated.View>
-            <Text style={styles.title}>{steps[currentStep].title}</Text>
-            <Text style={styles.description}>{steps[currentStep].description}</Text>
+            <Text style={[styles.title, { color: Colors.palette.white }]}>{steps[currentStep].title}</Text>
+            <Text style={[styles.description, { color: Colors.palette.grayLight }]}>{steps[currentStep].description}</Text>
           </Animated.View>
         </PanGestureHandler>
 
@@ -181,18 +162,18 @@ const OnboardingView = () => {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[styles.button, styles.skipButton]}
+            style={[styles.button, styles.skipButton, { backgroundColor: Colors.palette.purpleLight }]}
             onPress={handleSkip}
           >
-            <Text style={styles.buttonText}>Pular</Text>
+            <Text style={[styles.buttonText, { color: Colors.palette.white }]}>Pular</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.button, styles.nextButton]}
-            onPress={handleNext}
+            style={[styles.button, styles.nextButton, { backgroundColor: Colors.palette.green }]}
+            onPress={isLastStep ? handleSkip : handleNext}
           >
-            <Text style={styles.buttonText}>
-              {isLastStep ? 'Começar' : 'Próximo'}
+            <Text style={[styles.buttonText, { color: Colors.palette.white }]}>
+              {isLastStep ? 'Continuar' : 'Próximo'}
             </Text>
           </TouchableOpacity>
         </View>
